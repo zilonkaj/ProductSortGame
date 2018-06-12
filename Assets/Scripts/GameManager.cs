@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager> {
-
-    List<Product> products;
+class GameManager : Singleton<GameManager> {
 
     // predefined list used for testing. needs to be replaced with actual
     // products
@@ -14,26 +12,29 @@ public class GameManager : Singleton<GameManager> {
 
 
 
+    List<Product> products;
+
+
+    // guarantee this will always be a singleton
+    protected GameManager() { }
+
     // Use this for initialization
 	void Start () {
         BuildTestProducts();
         products = new List<Product>(testproducts);
+        ShuffleProductList();
+        InitializeUI();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 
     // only used for mockup
     void BuildTestProducts()
     {
-        testproducts.Add(new Product("TV", "Electronics"));
+        testproducts.Add(new Product("TV", "Uncategorized"));
         testproducts.Add(new Product("Dress", "Fashion"));
         testproducts.Add(new Product("Phone", "Electronics"));
         testproducts.Add(new Product("Ring", "Jewelry"));
-        testproducts.Add(new Product("Mystery", "Uncategorized"));
+        testproducts.Add(new Product("Shoes", "Uncategorized"));
+        testproducts.Add(new Product("Printer", "Uncategorized"));
     }
 
     void ShuffleProductList()
@@ -48,8 +49,35 @@ public class GameManager : Singleton<GameManager> {
             products[randomnum] = products[i];
             products[i] = temp;
         }
+    }
+
+    void InitializeUI()
+    {
+        for (int i = 0; i < UI.Instance.CubeList.Count; i++)
+        {
+            UI.Instance.SetCubeAtPos(i, products[i]);
+        }
+    }
+
+    //void RemoveOnDrag()
+    //{
+    //    products.In
 
 
+
+
+
+    //}
+
+
+
+
+
+
+
+    // Update is called once per frame
+    void Update()
+    {
 
     }
 }
