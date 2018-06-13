@@ -6,7 +6,7 @@ class GameManager : Singleton<GameManager> {
 
     // predefined list used for testing. needs to be replaced with actual
     // products
-    List<Product> testproducts;
+    List<Product> testproducts = new List<Product>();
 
 
 
@@ -55,7 +55,7 @@ class GameManager : Singleton<GameManager> {
     {
         for (int i = 0; i < UI.Instance.CubeList.Count; i++)
         {
-            UI.Instance.SetCubeAtPos(i, products[i]);
+            UI.Instance.SetCubeAtIndex(i, products[i]);
         }
     }
 
