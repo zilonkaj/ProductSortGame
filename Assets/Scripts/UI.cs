@@ -7,23 +7,44 @@ public class UI : Singleton<UI> {
     // guarantee this will always be a singleton
     protected UI() { }
 
-    public List<Cube> CubeList;
+    public List<Cube> Cubes;
+
+    public List<Box> Boxes;
 
     // used for drag and drop
     RaycastHit hitresult;
     UIObject ObjectToMove = null;
 
-    public void SetCubeAtIndex(int index, Product NewProduct)
+    public void SetCubesToProducts()
     {
-        CubeList[index].SetText(NewProduct.Name);
-        CubeList[index].isEmpty = false;
+        foreach (Cube cube in Cubes)
+        {
+            if (cube.product != null)
+            {
+                cube.textmesh.text = cube.product.Name;
+            }
+        }
+    }
+
+    public void UpdateBoxTextMeshes()
+    {
+        foreach (Box BoxToSet in Boxes)
+        {
+            for (int i = 0; i < BoxToSet.BoxContents.Count; i++)
+            {
+                BoxToSet.ProductTextMeshs[i].text = BoxToSet.BoxContents[i].Name; 
+            }
+        }
     }
 
     public void ClearCubeAtIndex(int index)
     {
-        CubeList[index].SetText("");
-        CubeList[index].isEmpty = true;
+        Cubes[index].SetText("");
+        Cubes[index].isEmpty = true;
     }
+
+  
+
 
     void MoveUIObjectAtMousePos()
     {
@@ -37,14 +58,6 @@ public class UI : Singleton<UI> {
             // z is arbitrary
             Vector3 MouseScreenPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
             ObjectToMove.transform.position = Camera.main.ScreenToWorldPoint(MouseScreenPos);
-        }
-    }
-
-    void PrintUIObjectName(UIObject uiobject)
-    {
-        if (uiobject != null)
-        {
-            print(uiobject.name);  
         }
     }
 
@@ -67,7 +80,22 @@ public class UI : Singleton<UI> {
         ObjectToMove.transform.position = ObjectToMove.OriginalTransform;
     }
 
+    void CheckIfPlacedInBox()
+    {
+        Cube cube = ObjectToMove.GetCube();
+        Box box = null;
 
+        // GetUIObjectAtMousePos ignores ObjectToMove due to layer change.
+        if (GetUIObjectAtMousePos() != null)
+        {
+            box = GetUIObjectAtMousePos().GetBox();
+        }
+
+        if (cube != null && box != null)
+        {
+           GameManager.Instance.ProductPlacedInBox(cube, box);
+        }
+    }
 
 
 
@@ -85,9 +113,10 @@ public class UI : Singleton<UI> {
         {
             // 2 is ignoreRaycast layer
             ObjectToMove.gameObject.layer = 2;
-            PrintUIObjectName(GetUIObjectAtMousePos());
-            ObjectToMove.gameObject.layer = 0;
 
+            CheckIfPlacedInBox();
+
+            ObjectToMove.gameObject.layer = 0;
             MoveUIObjectBack();
             ObjectToMove = null;
         }

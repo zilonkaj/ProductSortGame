@@ -23,6 +23,7 @@ class GameManager : Singleton<GameManager> {
         BuildTestProducts();
         products = new List<Product>(testproducts);
         ShuffleProductList();
+        AssignProductsToCubes();
         InitializeUI();
 	}
 
@@ -35,6 +36,10 @@ class GameManager : Singleton<GameManager> {
         testproducts.Add(new Product("Ring", "Jewelry"));
         testproducts.Add(new Product("Shoes", "Uncategorized"));
         testproducts.Add(new Product("Printer", "Uncategorized"));
+        testproducts.Add(new Product("Table", "Furniture"));
+        testproducts.Add(new Product("Tablet", "Uncategorized"));
+        testproducts.Add(new Product("Cabinet", "Uncategorized"));
+        testproducts.Add(new Product("Broom", "Home"));
     }
 
     void ShuffleProductList()
@@ -51,26 +56,24 @@ class GameManager : Singleton<GameManager> {
         }
     }
 
-    void InitializeUI()
+    void AssignProductsToCubes()
     {
-        for (int i = 0; i < UI.Instance.CubeList.Count; i++)
+        for (int i = 0; i < UI.Instance.Cubes.Count; i++)
         {
-            UI.Instance.SetCubeAtIndex(i, products[i]);
+            UI.Instance.Cubes[i].product = products[i];
         }
     }
 
-    //void RemoveOnDrag()
-    //{
-    //    products.In
+    void InitializeUI()
+    {
+        UI.Instance.SetCubesToProducts();
+    }
 
-
-
-
-
-    //}
-
-
-
+    public void ProductPlacedInBox(Cube cube, Box BoxToAddTo)
+    {
+        BoxToAddTo.AddProduct(cube.product);
+        UI.Instance.UpdateBoxTextMeshes();
+    }
 
 
 

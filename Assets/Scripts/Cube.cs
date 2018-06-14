@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube : UIObject{
-
+    
     public TextMesh textmesh;
 
-    public bool isEmpty = true;
+    public Product product = null;
+
 
     public void SetText(string newtext)
     {
         textmesh.text = newtext;
     }
 
-	public string GetText()
+    public string GetText()
     {
         return textmesh.text;
     }
 
     void Start()
     {
-        OriginalTransform = transform.position;
+        OriginalTransform = transform.position;  
     }
 
 
