@@ -60,8 +60,31 @@ class GameManager : Singleton<GameManager> {
     {
         for (int i = 0; i < UI.Instance.Cubes.Count; i++)
         {
-            UI.Instance.Cubes[i].product = products[i];
+            UI.Instance.Cubes[i].product = products[0];
+            products.Remove(products[0]);
         }
+    }
+
+    void ResetCube(Cube CubeToReset)
+    {
+        Product ProductToRemove = CubeToReset.product;
+        UI.Instance.ClearCube(CubeToReset);
+        AssignNewProduct(CubeToReset);
+
+
+
+    }
+
+    void AssignNewProduct(Cube CubeToSet)
+    {
+        if (products.Count != 0)
+        {
+            CubeToSet.product = products[0];
+            products.Remove(products[0]);
+            UI.Instance.SetCubesToProducts();
+        }
+
+
     }
 
     void InitializeUI()
@@ -73,6 +96,7 @@ class GameManager : Singleton<GameManager> {
     {
         BoxToAddTo.AddProduct(cube.product);
         UI.Instance.UpdateBoxTextMeshes();
+        ResetCube(cube);
     }
 
 

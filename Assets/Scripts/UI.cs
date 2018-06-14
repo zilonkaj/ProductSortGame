@@ -37,10 +37,9 @@ public class UI : Singleton<UI> {
         }
     }
 
-    public void ClearCubeAtIndex(int index)
+    public void ClearCube(Cube CubeToClear)
     {
-        Cubes[index].SetText("");
-        Cubes[index].isEmpty = true;
+        CubeToClear.SetText("");
     }
 
   
