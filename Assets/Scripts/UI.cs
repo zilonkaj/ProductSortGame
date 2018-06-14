@@ -34,10 +34,17 @@ public class UI : Singleton<UI> {
 
         else if (ObjectToMove.IsMoveable) 
         {
-            float x = Input.GetAxis("Mouse X");
-            float y = Input.GetAxis("Mouse Y");
+            // z is arbitrary
+            Vector3 MouseScreenPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
+            ObjectToMove.transform.position = Camera.main.ScreenToWorldPoint(MouseScreenPos);
+        }
+    }
 
-            ObjectToMove.transform.Translate(new Vector3(x, y, 0));
+    void PrintUIObjectName(UIObject uiobject)
+    {
+        if (uiobject != null)
+        {
+            print(uiobject.name);  
         }
     }
 
@@ -74,8 +81,13 @@ public class UI : Singleton<UI> {
             MoveUIObjectAtMousePos();  
         }
 
-        if (!Input.GetMouseButton(0) && ObjectToMove != null)
+        if (Input.GetMouseButtonUp(0) && ObjectToMove != null)
         {
+            // 2 is ignoreRaycast layer
+            ObjectToMove.gameObject.layer = 2;
+            PrintUIObjectName(GetUIObjectAtMousePos());
+            ObjectToMove.gameObject.layer = 0;
+
             MoveUIObjectBack();
             ObjectToMove = null;
         }
