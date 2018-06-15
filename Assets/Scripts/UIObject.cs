@@ -8,8 +8,6 @@ public abstract class UIObject: MonoBehaviour {
 
     public Vector3 OriginalTransform;
 
-    public bool isEmpty = true;
-
     public Cube GetCube()
     {
         return GetComponent<Cube>();
@@ -18,6 +16,11 @@ public abstract class UIObject: MonoBehaviour {
     public Box GetBox()
     {
         return GetComponent<Box>();
+    }
+
+    public Sphere GetSphere()
+    {
+        return GetComponent<Sphere>();
     }
 
     // Use this for initialization

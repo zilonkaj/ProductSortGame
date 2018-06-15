@@ -11,6 +11,8 @@ public class UI : Singleton<UI> {
 
     public List<Box> Boxes;
 
+    public List<Sphere> Characters;
+
     // used for drag and drop
     RaycastHit hitresult;
     UIObject ObjectToMove = null;
@@ -41,9 +43,6 @@ public class UI : Singleton<UI> {
     {
         CubeToClear.SetText("");
     }
-
-  
-
 
     void MoveUIObjectAtMousePos()
     {
@@ -96,7 +95,32 @@ public class UI : Singleton<UI> {
         }
     }
 
+    public void SetSpheres()
+    {
+        foreach (Sphere sphere in Characters)
+        {
+            if (sphere.character != null)
+            {
+                sphere.textmesh.text = sphere.character.DesiredCategory;
+            }
+        }  
+    }
 
+    void CheckIfPlacedOnSphere()
+    {
+        Box box = ObjectToMove.GetBox();
+        Sphere sphere = null;
+
+        if (GetUIObjectAtMousePos() != null)
+        {
+            sphere = GetUIObjectAtMousePos().GetSphere();
+        }
+
+        if (box != null && sphere != null)
+        {
+            GameManager.Instance.BoxGivenToCharacter(box, sphere);
+        }
+    }
 
 
 
