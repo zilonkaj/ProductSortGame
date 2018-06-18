@@ -18,11 +18,12 @@ class GameManager : Singleton<GameManager> {
 
     // Use this for initialization
 	void Start () {
+        Time.timeScale = 1.0f;
         BuildTestProducts();
         BuildCharacterCategories();
         ProductBacklog = new List<Product>(testproducts);
         ShuffleProductList();
-        AssignProductsToCubes();
+        InitializeCubes();
         InitializeUI();
         InitializeFirstCharacters();
 	}
@@ -77,7 +78,7 @@ class GameManager : Singleton<GameManager> {
         }
     }
 
-    void AssignProductsToCubes()
+    void InitializeCubes()
     {
         for (int i = 0; i < UI.Instance.Cubes.Count; i++)
         {
@@ -88,7 +89,7 @@ class GameManager : Singleton<GameManager> {
 
     void ResetCube(Cube CubeToReset)
     {
-        UI.Instance.ClearCube(CubeToReset);
+        UI.Instance.ClearCubeText(CubeToReset);
         AssignNewProduct(CubeToReset);
     }
 
@@ -98,7 +99,7 @@ class GameManager : Singleton<GameManager> {
         {
             CubeToSet.product = ProductBacklog[0];
             ProductBacklog.Remove(ProductBacklog[0]);
-            UI.Instance.SetCubesToProducts();
+            UI.Instance.UpdateCubeText();
         }
         else
         {
@@ -108,7 +109,7 @@ class GameManager : Singleton<GameManager> {
 
     void InitializeUI()
     {
-        UI.Instance.SetCubesToProducts();
+        UI.Instance.UpdateCubeText();
     }
 
     public void ProductPlacedInBox(Cube cube, Box BoxToAddTo)
@@ -118,16 +119,43 @@ class GameManager : Singleton<GameManager> {
             BoxToAddTo.AddProduct(cube.product);
             //BoxToAddTo.UpdateCategory();
             ResetCube(cube);
-            StartCoroutine(PackingBox(BoxToAddTo));
+            StartPackingBox(BoxToAddTo);
         }
     }
 
-    IEnumerator PackingBox(Box BoxBeingPacked)
+    void StartPackingBox(Box BoxBeingPacked)
     {
-        BoxBeingPacked.IsMoveable = false;
-        yield return new WaitForSeconds(2f);
-        UI.Instance.UpdateBoxTextMeshes();
-        BoxBeingPacked.IsMoveable = true;
+        DisableBox(BoxBeingPacked);
+        BoxBeingPacked.Timer += (2.5f * BoxBeingPacked.TimerMultiplier);
+        BoxBeingPacked.isTimerActive = true;
+    }
+
+    void DisableBox(Box BoxToDisable)
+    {
+        BoxToDisable.IsMoveable = false;
+        UI.Instance.ClearBoxText(BoxToDisable);
+    }
+
+    void BoxTimer(Box BoxWithActiveTimer)
+    {
+        if (BoxWithActiveTimer.Timer >= 1)
+        {
+            BoxWithActiveTimer.Timer -= Time.deltaTime;
+        }
+        else
+        {
+            BoxWithActiveTimer.Timer = 0;
+            BoxWithActiveTimer.isTimerActive = false;
+            BoxWithActiveTimer.TimerMultiplier++;
+            EnableBox(BoxWithActiveTimer);
+        }
+    }
+
+    void EnableBox(Box BoxToEnable)
+    {
+        UI.Instance.DisableBoxTimer(BoxToEnable);
+        UI.Instance.EnableSingleBoxText(BoxToEnable);
+        BoxToEnable.IsMoveable = true;
     }
 
     string PickRandomCategory()
@@ -157,7 +185,7 @@ class GameManager : Singleton<GameManager> {
                 break;
             }
         }
-        UI.Instance.SetSpheres();
+        UI.Instance.SetSphereText();
     }
 
     public void BoxGivenToCharacter(Box box, Sphere sphere)
@@ -172,6 +200,15 @@ class GameManager : Singleton<GameManager> {
     // Update is called once per frame
     void Update()
     {
+        foreach (Box box in UI.Instance.Boxes)
+        {
+            if (box.isTimerActive)
+            {
+                BoxTimer(box); 
+            }
+        }
+
+
 
     }
 }

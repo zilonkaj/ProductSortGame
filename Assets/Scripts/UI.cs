@@ -17,7 +17,7 @@ public class UI : Singleton<UI> {
     RaycastHit hitresult;
     UIObject ObjectToMove = null;
 
-    public void SetCubesToProducts()
+    public void UpdateCubeText()
     {
         foreach (Cube cube in Cubes)
         {
@@ -28,18 +28,40 @@ public class UI : Singleton<UI> {
         }
     }
 
-    public void UpdateBoxTextMeshes()
+    public void EnableSingleBoxText(Box BoxToEnable)
     {
-        foreach (Box BoxToSet in Boxes)
+        for (int i = 0; i < BoxToEnable.BoxContents.Count; i++)
         {
-            for (int i = 0; i < BoxToSet.BoxContents.Count; i++)
+            BoxToEnable.ProductTextMeshs[i].text = BoxToEnable.BoxContents[i].Name;
+        }
+    }
+
+    public void EnableAllBoxText()
+    {
+        foreach (Box BoxToEnable in Boxes)
+        {
+            for (int i = 0; i < BoxToEnable.BoxContents.Count; i++)
             {
-                BoxToSet.ProductTextMeshs[i].text = BoxToSet.BoxContents[i].Name; 
+                BoxToEnable.ProductTextMeshs[i].text = BoxToEnable.BoxContents[i].Name; 
             }
         }
     }
 
-    public void ClearCube(Cube CubeToClear)
+    public void ClearBoxText(Box BoxToClear)
+    {
+        foreach (TextMesh textmesh in BoxToClear.ProductTextMeshs)
+        {
+            textmesh.text = ""; 
+        }
+
+    }
+
+    public void DisableBoxTimer(Box BoxTimerToDisable)
+    {
+        BoxTimerToDisable.TimerText.text = "";
+    }
+
+    public void ClearCubeText(Cube CubeToClear)
     {
         CubeToClear.SetText("");
     }
@@ -95,7 +117,7 @@ public class UI : Singleton<UI> {
         }
     }
 
-    public void SetSpheres()
+    public void SetSphereText()
     {
         foreach (Sphere sphere in Characters)
         {
@@ -138,10 +160,20 @@ public class UI : Singleton<UI> {
             ObjectToMove.gameObject.layer = 2;
 
             CheckIfPlacedInBox();
+            CheckIfPlacedOnSphere();
 
             ObjectToMove.gameObject.layer = 0;
             MoveUIObjectBack();
             ObjectToMove = null;
+        }
+
+        foreach (Box box in Boxes)
+        {
+            if (box.isTimerActive)
+            {
+                int TimeInt = (int)box.Timer;
+                box.TimerText.text = TimeInt.ToString();
+            }
         }
     }  
 }

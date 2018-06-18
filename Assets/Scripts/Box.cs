@@ -8,8 +8,15 @@ public class Box : UIObject{
 
     public List<TextMesh> ProductTextMeshs;
 
+    public TextMesh TimerText;
+
     //string Category = "Empty";
 
+    public float Timer = 0;
+
+    public int TimerMultiplier = 1;
+
+    public bool isTimerActive = false;
 
     public void AddProduct(Product ProductToAdd)
     {
