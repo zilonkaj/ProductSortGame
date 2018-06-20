@@ -17,6 +17,8 @@ public class UI : Singleton<UI> {
     RaycastHit hitresult;
     UIObject ObjectToMove = null;
 
+    public bool MoveObjectBack = true;
+
     public void UpdateCubeText()
     {
         foreach (Cube cube in Cubes)
@@ -95,9 +97,9 @@ public class UI : Singleton<UI> {
         return (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitresult, Mathf.Infinity));
     }
 
-    void MoveUIObjectBack()
+    public void MoveUIObjectBack(UIObject ObjectToMoveBack)
     {
-        ObjectToMove.transform.position = ObjectToMove.OriginalTransform;
+        ObjectToMoveBack.transform.position = ObjectToMoveBack.OriginalTransform;
     }
 
     void CheckIfPlacedInBox()
@@ -113,11 +115,12 @@ public class UI : Singleton<UI> {
 
         if (cube != null && box != null)
         {
-           GameManager.Instance.ProductPlacedInBox(cube, box);
+            MoveObjectBack = true;
+            GameManager.Instance.ProductPlacedInBox(cube, box);
         }
     }
 
-    public void SetSphereText()
+    public void SetAllSphereText()
     {
         foreach (Sphere sphere in Characters)
         {
@@ -126,6 +129,11 @@ public class UI : Singleton<UI> {
                 sphere.textmesh.text = sphere.character.DesiredCategory;
             }
         }  
+    }
+
+    public void ClearSphereText(Sphere SphereToClear)
+    {
+        SphereToClear.textmesh.text = "";
     }
 
     void CheckIfPlacedOnSphere()
@@ -138,13 +146,18 @@ public class UI : Singleton<UI> {
             sphere = GetUIObjectAtMousePos().GetSphere();
         }
 
-        if (box != null && sphere != null)
+        if (box != null && box.IsMoveable && sphere != null)
         {
+            MoveObjectBack = false;
             GameManager.Instance.BoxGivenToCharacter(box, sphere);
         }
     }
 
-
+    public void SetSphereColor(Sphere sphere, Color SphereColor)
+    {
+        Renderer SphereRenderer = sphere.GetComponent<Renderer>();
+        SphereRenderer.material.SetColor("_Color", SphereColor);
+    }
 
     void Update()
     {
@@ -163,7 +176,12 @@ public class UI : Singleton<UI> {
             CheckIfPlacedOnSphere();
 
             ObjectToMove.gameObject.layer = 0;
-            MoveUIObjectBack();
+
+            if (MoveObjectBack)
+            {
+                MoveUIObjectBack(ObjectToMove);
+            }
+
             ObjectToMove = null;
         }
 

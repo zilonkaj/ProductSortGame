@@ -8,6 +8,8 @@ public abstract class UIObject: MonoBehaviour {
 
     public Vector3 OriginalTransform;
 
+    public Vector3 OriginalScale;
+
     public Cube GetCube()
     {
         return GetComponent<Cube>();

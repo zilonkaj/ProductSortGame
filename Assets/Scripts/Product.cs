@@ -5,12 +5,12 @@ using UnityEngine;
 public class Product {
 
     public string Name;
-    public string Category;
+    public List<string> Categories = new List<string>();
 
     public Product(string name, string category)
     {
         Name = name;
-        Category = category;
+        Categories.Add(category);
     }
 
 

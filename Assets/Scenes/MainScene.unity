@@ -251,7 +251,9 @@ TextMesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 37996311}
-  m_Text: Text
+  m_Text: '
+
+'
   m_OffsetZ: -1
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -687,7 +689,9 @@ TextMesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 332443268}
-  m_Text: Text
+  m_Text: '
+
+'
   m_OffsetZ: -1
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -977,6 +981,7 @@ MonoBehaviour:
   - {fileID: 1895244553}
   TimerText: {fileID: 1652711159}
   Timer: 0
+  TimerMultiplier: 1
   isTimerActive: 0
 --- !u!1 &629204973
 GameObject:
@@ -1392,6 +1397,7 @@ MonoBehaviour:
   - {fileID: 629204975}
   TimerText: {fileID: 1712874207}
   Timer: 0
+  TimerMultiplier: 1
   isTimerActive: 0
 --- !u!65 &732044187
 BoxCollider:
@@ -2377,6 +2383,7 @@ MonoBehaviour:
   - {fileID: 155139728}
   TimerText: {fileID: 1136292498}
   Timer: 0
+  TimerMultiplier: 1
   isTimerActive: 0
 --- !u!65 &1251274577
 BoxCollider:
@@ -3615,7 +3622,9 @@ TextMesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2052840603}
-  m_Text: Text
+  m_Text: '
+
+'
   m_OffsetZ: -1
   m_CharacterSize: 1
   m_LineSpacing: 1
