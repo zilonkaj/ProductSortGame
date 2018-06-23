@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube : UIObject{
-    
+
     public TextMesh textmesh;
 
     public Product product = null;

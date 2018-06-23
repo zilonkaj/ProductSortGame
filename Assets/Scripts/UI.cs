@@ -8,24 +8,21 @@ public class UI : Singleton<UI> {
     protected UI() { }
 
     public List<Cube> Cubes;
-
     public List<Box> Boxes;
-
     public List<Sphere> Characters;
 
     // used for drag and drop
     RaycastHit hitresult;
     UIObject ObjectToMove = null;
-
     public bool MoveObjectBack = true;
 
-    public void UpdateCubeText()
+    public void UpdateAllCubeText()
     {
         foreach (Cube cube in Cubes)
         {
             if (cube.product != null)
             {
-                cube.textmesh.text = cube.product.Name;
+                cube.SetText(cube.product.Name);
             }
         }
     }
@@ -49,7 +46,7 @@ public class UI : Singleton<UI> {
         }
     }
 
-    public void ClearBoxText(Box BoxToClear)
+    public void ClearAllBoxText(Box BoxToClear)
     {
         foreach (TextMesh textmesh in BoxToClear.ProductTextMeshs)
         {
@@ -102,7 +99,7 @@ public class UI : Singleton<UI> {
         ObjectToMoveBack.transform.position = ObjectToMoveBack.OriginalTransform;
     }
 
-    void CheckIfPlacedInBox()
+    void CheckIfCubePlacedInBox()
     {
         Cube cube = ObjectToMove.GetCube();
         Box box = null;
@@ -120,7 +117,7 @@ public class UI : Singleton<UI> {
         }
     }
 
-    public void SetAllSphereText()
+    public void UpdateAllSphereText()
     {
         foreach (Sphere sphere in Characters)
         {
@@ -136,7 +133,7 @@ public class UI : Singleton<UI> {
         SphereToClear.textmesh.text = "";
     }
 
-    void CheckIfPlacedOnSphere()
+    void CheckIfBoxPlacedOnSphere()
     {
         Box box = ObjectToMove.GetBox();
         Sphere sphere = null;
@@ -146,7 +143,8 @@ public class UI : Singleton<UI> {
             sphere = GetUIObjectAtMousePos().GetSphere();
         }
 
-        if (box != null && box.IsMoveable && sphere != null)
+        // THIS NEEDS TO BE FIXED
+        if (box != null && box.IsMoveable && sphere != null && sphere.character != null)
         {
             MoveObjectBack = false;
             GameManager.Instance.BoxGivenToCharacter(box, sphere);
@@ -157,6 +155,16 @@ public class UI : Singleton<UI> {
     {
         Renderer SphereRenderer = sphere.GetComponent<Renderer>();
         SphereRenderer.material.SetColor("_Color", SphereColor);
+    }
+
+    public void ShrinkBoxScale(Box BoxToChange)
+    {
+        BoxToChange.transform.localScale = new Vector3(1f, 1f, 1f);
+    }
+
+    public void ResetBoxScale(Box BoxToReset)
+    {
+        BoxToReset.transform.localScale = BoxToReset.OriginalScale;
     }
 
     void Update()
@@ -172,8 +180,8 @@ public class UI : Singleton<UI> {
             // 2 is ignoreRaycast layer
             ObjectToMove.gameObject.layer = 2;
 
-            CheckIfPlacedInBox();
-            CheckIfPlacedOnSphere();
+            CheckIfCubePlacedInBox();
+            CheckIfBoxPlacedOnSphere();
 
             ObjectToMove.gameObject.layer = 0;
 

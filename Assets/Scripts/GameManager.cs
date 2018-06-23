@@ -86,7 +86,7 @@ class GameManager : Singleton<GameManager> {
             UI.Instance.Cubes[i].product = ProductBacklog[0];
             ProductBacklog.Remove(ProductBacklog[0]);
         }
-        UI.Instance.UpdateCubeText();
+        UI.Instance.UpdateAllCubeText();
     }
 
     void ResetCube(Cube CubeToReset)
@@ -101,24 +101,25 @@ class GameManager : Singleton<GameManager> {
         {
             CubeToSet.product = ProductBacklog[0];
             ProductBacklog.Remove(ProductBacklog[0]);
-            UI.Instance.UpdateCubeText();
+            UI.Instance.UpdateAllCubeText();
         }
         else
         {
-            CubeToSet.product = null;  
+            CubeToSet.product = null;
+            CubeToSet.IsMoveable = false;
         }
     }
 
     void InitializeUI()
     {
-        UI.Instance.UpdateCubeText();
+        UI.Instance.UpdateAllCubeText();
     }
 
     void InitializeFirstCharacters()
     {
         StartCoroutine(SpawnNewCharacter(10f));
+        StartCoroutine(SpawnNewCharacter(12f));
         StartCoroutine(SpawnNewCharacter(20f));
-        StartCoroutine(SpawnNewCharacter(30f));
     }
 
     public void ProductPlacedInBox(Cube cube, Box BoxToAddTo)
@@ -141,13 +142,13 @@ class GameManager : Singleton<GameManager> {
     void DisableBox(Box BoxToDisable)
     {
         BoxToDisable.IsMoveable = false;
-        UI.Instance.ClearBoxText(BoxToDisable);
+        UI.Instance.ClearAllBoxText(BoxToDisable);
     }
 
-    IEnumerator ResetBox(Box BoxToReset)
+    void ResetBox(Box BoxToReset)
     {
-        yield return new WaitForSeconds(2f);
-        UI.Instance.MoveUIObjectBack(BoxToReset.GetComponent<UIObject>());
+        UI.Instance.MoveUIObjectBack(BoxToReset);
+        UI.Instance.ResetBoxScale(BoxToReset);
         DisableBox(BoxToReset);
         BoxToReset.BoxContents = new List<Product>();
         BoxToReset.TimerMultiplier = 1;
@@ -185,24 +186,22 @@ class GameManager : Singleton<GameManager> {
     IEnumerator SpawnNewCharacter(float timedelay)
     {
         yield return new WaitForSeconds(timedelay);
-        Character NewCharacter = new Character();
-        NewCharacter.DesiredCategory = PickRandomCategory();
-        SetEmptySphere(NewCharacter);
+        Sphere EmptySphere = GetEmptySphere();
+        EmptySphere.character = new Character(PickRandomCategory());
+        UI.Instance.UpdateAllSphereText();
     }
 
-    void SetEmptySphere(Character NewCharacter)
+    Sphere GetEmptySphere()
     {
         foreach (Sphere sphere in UI.Instance.Characters)
         {
             if (sphere.character == null)
             {
-                sphere.character = NewCharacter;
-                break;
+                return sphere;
             }
         }
-        UI.Instance.SetAllSphereText();
+        return null;
     }
-
 
     public void BoxGivenToCharacter(Box box, Sphere sphere)
     {
@@ -211,6 +210,7 @@ class GameManager : Singleton<GameManager> {
 
         if (sphere.character != null)
         {
+            UI.Instance.ShrinkBoxScale(box);
             // invalidate box if one product is incorrect
             foreach (Product product in box.BoxContents)
             {
@@ -218,9 +218,11 @@ class GameManager : Singleton<GameManager> {
                 if (ProductResult == 0)
                 {
                     UI.Instance.SetSphereColor(sphere, Color.red);
-                    StartCoroutine(ResetBox(box));
+                    StartCoroutine(CharacterTakesBox(box, sphere));
                     return;
                 }
+                
+                // else
                 ProductResults.Add(ProductResult);
             }
 
@@ -230,18 +232,31 @@ class GameManager : Singleton<GameManager> {
                 if (result == 2)
                 {
                     UI.Instance.SetSphereColor(sphere, Color.yellow);
-                    StartCoroutine(ResetBox(box));
+                    StartCoroutine(CharacterTakesBox(box, sphere));
                     CorrectBoxes.Add(box);
                     return;
                 }
             }
             UI.Instance.SetSphereColor(sphere, Color.green);
-            StartCoroutine(ResetBox(box));
+            StartCoroutine(CharacterTakesBox(box, sphere));
             CorrectBoxes.Add(box);
         }
     }
 
+    IEnumerator CharacterTakesBox(Box box, Sphere sphere)
+    {
+        yield return new WaitForSeconds(2f);
+        ResetBox(box);
+        ResetSphere(sphere);
+        StartCoroutine(SpawnNewCharacter(4f));
+    }
 
+    void ResetSphere(Sphere SphereToReset)
+    {
+        UI.Instance.SetSphereColor(SphereToReset, Color.white);
+        UI.Instance.ClearSphereText(SphereToReset);
+        SphereToReset.character = null;
+    }
 
     // 0 is not desired category. 1 is desired category. 2 is "uncategorized"
     int IsProductDesiredCategory(Product product, string DesiredCategory)

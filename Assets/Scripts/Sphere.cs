@@ -10,6 +10,7 @@ public class Sphere : UIObject {
 
 	// Use this for initialization
 	void Start () {
+        IsMoveable = false;
         OriginalTransform = transform.position;
 	}
 	

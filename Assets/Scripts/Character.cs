@@ -6,12 +6,8 @@ public class Character {
 
     public string DesiredCategory;
 
-    // Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Character(string NewCategory)
+    {
+        DesiredCategory = NewCategory;
+    }
 }
